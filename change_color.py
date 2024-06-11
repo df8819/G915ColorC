@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import subprocess
 import os
+import stat
 
 def check_dependencies():
     try:
@@ -15,6 +16,25 @@ def check_dependencies():
                 root.destroy()
             except subprocess.CalledProcessError as e:
                 messagebox.showerror("Error", f"Failed to install dependencies: {e}")
+                root.destroy()
+        else:
+            root.destroy()
+
+def check_script_permissions(script_path):
+    if not os.path.isfile(script_path):
+        messagebox.showerror("Error", f"{script_path} not found.")
+        root.destroy()
+        return
+
+    st = os.stat(script_path)
+    if not st.st_mode & stat.S_IEXEC:
+        change_permissions = messagebox.askyesno("Change Permissions", f"{script_path} is not executable. Would you like to make it executable?")
+        if change_permissions:
+            try:
+                subprocess.run(["chmod", "+x", script_path], check=True)
+                messagebox.showinfo("Success", f"{script_path} is now executable.")
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Error", f"Failed to change permissions: {e}")
                 root.destroy()
         else:
             root.destroy()
@@ -64,6 +84,9 @@ root.geometry("380x180")  # Set the initial window size
 
 # Check if dependencies are installed
 check_dependencies()
+
+# Check if the script has the correct permissions
+check_script_permissions("G915.sh")
 
 # Get the device name
 device_name = get_device_name()
@@ -119,7 +142,6 @@ colors = {
     "Light Pink": "FFD1DC",
     "Light Peach": "FFDAB9"
 }
-
 
 color_var = tk.StringVar(root)
 color_var.set("Color")  # Default value

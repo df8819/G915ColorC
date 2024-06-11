@@ -110,7 +110,7 @@ color_entry.pack(side=tk.LEFT, padx=5)
 
 # Predefined color choices
 colors = {
-    "Off-White": "F0F0F0",
+    "White": "F0F0F0",
     "Black (OFF)": "000000",
     "Grey": "808080",
     "Red": "FF0000",

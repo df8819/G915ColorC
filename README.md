@@ -49,4 +49,6 @@ This Python application allows you to change the LED color of your Logitech G915
 
 - Enter custom hex color codes directly into the input field.
 
+![Image](2024-06-12_00-25.png)
+
 ### The default rainbow crap on the G915 annoyed me so hard I created this app. Hope it helps😎️

@@ -1,5 +1,5 @@
-## Important: Change the path/user in the shell script and .py file to match your system. "myisp" is just a placeholder.
----
+## ![red]{Important: Change the path/user in the shell script and .py file to match your system. "myisp" is just a placeholder.}
+
 # Change G915 LED Color
 
 This Python application allows you to change the LED color of your Logitech G915 keyboard using `ratbagctl`. It provides a graphical interface for selecting LEDs and setting their colors, including predefined and custom color codes.

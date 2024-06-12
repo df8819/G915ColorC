@@ -1,4 +1,4 @@
-<span style="color: red;">Important: Change the path/user in the shell script and .py file to match your system. "myisp" is just a placeholder.</span>
+![red]{Important: Change the path/user in the shell script and .py file to match your system. "myisp" is just a placeholder.}
 
 # Change G915 LED Color
 

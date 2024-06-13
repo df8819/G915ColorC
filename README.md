@@ -1,5 +1,5 @@
 #### Important: Change the path/user in ***G915.sh*** to match your environment. Saved path/user is a default placeholder. The function *'check_script_permissions'* (.py file) can be deleted to prevent the app from prompting you for permission if you don't want to use the G915.sh shortcut.
-### The default-rainbow-crap state the G915 entered after sleep/press a button/whatever annoyed me so hard I created this app. Hope it helps. No other method really worked unfortunately. [womanonrails](https://womanonrails.com/logitech-g915-tkl) was the inspiration for this small app. Thanks.
+### The default-rainbow-crap state the G915 entered after sleep/press a button/whatever annoyed me so hard I created this app. Hope it helps. No other method really worked unfortunately. [womanonrails](https://womanonrails.com/logitech-g915-tkl) was the inspiration for this small app and its commands. Thanks.
 
 # Change G915 LED Color
 

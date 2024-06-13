@@ -1,4 +1,5 @@
-#### Important: Change the path/user in the shell script and .py file to match your system. "myisp" is just a placeholder.
+#### Important: Change the path/user in ***G915.sh*** to match your environment. Saved path/user is a default placeholder. The function *'check_script_permissions'* can be deleted to prevent the app from prompting you for permission if you don't want to use the G915.sh shortcut.
+### The default-rainbow-crap state the G915 entered after sleep/press a button/whatever annoyed me so hard I created this app. Hope it helps. No other method really worked unfortunately. [womanonrails](https://womanonrails.com/logitech-g915-tkl) was the inspiration for this small app. Thanks.
 
 # Change G915 LED Color
 
@@ -18,7 +19,7 @@ This Python application allows you to change the LED color of your Logitech G915
 1. **Ensure Dependencies**:
     - Install dependencies if prompted.
     
-2. **Set Script Permissions**:
+2. **Set Script Permissions (Can be deleted/excluded)**:
     - Make `G915.sh` executable if prompted (This is for easy access like create a link to desktop)
 
 3. **Run the Application**:
@@ -34,6 +35,8 @@ This Python application allows you to change the LED color of your Logitech G915
 
 6. **Change Color**:
     - Click "Change Color" to apply the new color to the selected LED.
+    - Enter [custom hex color](https://www.rapidtables.com/web/color/RGB_Color.html) codes directly into the input field.
+
 
 ## Predefined Colors
 
@@ -47,10 +50,9 @@ This Python application allows you to change the LED color of your Logitech G915
 - Cyan
 - ...
 
-## Custom Color Codes
+## Ideas
+- This could be optimized for a lot more devices, but I just wanted a quick solution while setting up Mint.
 
-- Enter custom hex color codes directly into the input field.
+## Screenshot
 
 ![Image](2024-06-12_00-25.png)
-
-### The default rainbow crap on the G915 annoyed me so hard I created this app. Hope it helps. No other method really worked unfortunately.

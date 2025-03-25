@@ -86,7 +86,7 @@ def main():
     # Initialize the main window
     root = tk.Tk()
     root.title("Change G915 LED Color")
-    root.geometry("380x180")  # Set the initial window size
+    root.geometry("480x280")  # Set the initial window size
 
     # Check if dependencies are installed
     if not check_dependencies():

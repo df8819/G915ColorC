@@ -4,14 +4,12 @@ This Python app allows you to change the LED color of your Logitech G915 keyboar
 
 ## Features
 - **Dependency Check**: Ensures `ratbagctl` is installed, with prompts to install if missing.
-- **Script Permissions**: Checks if `G915.sh` is executable and prompts to fix permissions if needed.
 - **LED Selection**: Choose which LED to modify (e.g., LED 0 for G-Logo, LED 1 for others).
 - **Color Selection**: Dropdown menu with predefined colors or enter custom hex codes.
 - **Custom Codes**: Supports manual input of hex color codes.
 
 ## Usage
 1. **Install Dependencies**: Follow prompts to install `ratbagctl` if not already installed.
-2. **Set Script Permissions**: Make `G915.sh` executable if prompted (optional).
 3. **Run the App**:
    ```bash
    python3 change_color.py
@@ -35,8 +33,6 @@ This Python app allows you to change the LED color of your Logitech G915 keyboar
 - Dark/Light Variants of Colors
 
 ## Notes
-- Modify the path/user in `G915.sh` to match your environment.
-- Delete the `check_script_permissions` function if you don't need the app to prompt for script permissions.
 - Inspired by [womanonrails](https://womanonrails.com/logitech-g915-tkl).
 
 ## Ideas

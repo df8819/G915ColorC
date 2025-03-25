@@ -1,45 +1,26 @@
-#### Important: Change the path/user in ***G915.sh*** to match your environment. Saved path/user is a default placeholder. The function *'check_script_permissions'* (.py file) can be deleted to prevent the app from prompting you for permission if you don't want to use the G915.sh shortcut.
-### The default-rainbow-crap state the G915 entered after sleep/press a button/whatever annoyed me so hard I created this app. Hope it helps. No other method really worked unfortunately. [womanonrails](https://womanonrails.com/logitech-g915-tkl) was the inspiration for this small app and its commands. Thanks.
-
 # Change G915 LED Color
 
-This Python application allows you to change the LED color of your Logitech G915 keyboard using `ratbagctl`. It provides a graphical interface for selecting LEDs and setting their colors, including predefined and custom color codes.
+This Python app allows you to change the LED color of your Logitech G915 keyboard using `ratbagctl`. It provides a simple GUI for selecting LEDs and setting colors, including predefined and custom color codes.
 
 ## Features
-
-- **Check Dependencies**: Automatically checks if `ratbagctl` is installed. Prompts the user to install it if missing.
-- **Script Permissions**: Checks if `G915.sh` is executable and prompts the user to change permissions if necessary.
-- **LED Selection**: Allows the user to select which LED to modify (e.g., LED 0 for G-Logo, LED 1 for the rest).
-- **Color Selection**: Provides a dropdown menu with predefined colors and their corresponding codes.
-- **Custom Color Codes**: Supports entering custom color codes directly into the input field.
-- **Clear Input Field**: Automatically clears the color input field after changing the color.
+- **Dependency Check**: Ensures `ratbagctl` is installed, with prompts to install if missing.
+- **Script Permissions**: Checks if `G915.sh` is executable and prompts to fix permissions if needed.
+- **LED Selection**: Choose which LED to modify (e.g., LED 0 for G-Logo, LED 1 for others).
+- **Color Selection**: Dropdown menu with predefined colors or enter custom hex codes.
+- **Custom Codes**: Supports manual input of hex color codes.
 
 ## Usage
-
-1. **Ensure Dependencies**:
-    - Install dependencies if prompted.
-    
-2. **Set Script Permissions (Can be deleted/excluded)**:
-    - Make `G915.sh` executable if prompted (This is for easy access like create a link to desktop)
-
-3. **Run the Application**:
-    ```bash
-    python3 change_color.py
-    ```
-
-4. **Select LED**:
-    - Choose the LED to modify from the dropdown menu.
-
-5. **Select or Enter Color**:
-    - Choose a color from the dropdown menu or enter a custom color code.
-
-6. **Change Color**:
-    - Click "Change Color" to apply the new color to the selected LED.
-    - Enter [custom hex color](https://www.rapidtables.com/web/color/RGB_Color.html) codes directly into the input field.
-
+1. **Install Dependencies**: Follow prompts to install `ratbagctl` if not already installed.
+2. **Set Script Permissions**: Make `G915.sh` executable if prompted (optional).
+3. **Run the App**:
+   ```bash
+   python3 change_color.py
+   ```
+4. **Select LED**: Choose the LED to modify from the dropdown.
+5. **Choose/Enter Color**: Select a predefined color or input a custom hex code.
+6. **Apply Changes**: Click "Change Color" to update the LED.
 
 ## Predefined Colors
-
 - White
 - Black (OFF)
 - Grey
@@ -48,11 +29,18 @@ This Python application allows you to change the LED color of your Logitech G915
 - Blue
 - Yellow
 - Cyan
-- ...
+- Magenta
+- Orange
+- Purple
+- Dark/Light Variants of Colors
+
+## Notes
+- Modify the path/user in `G915.sh` to match your environment.
+- Delete the `check_script_permissions` function if you don't need the app to prompt for script permissions.
+- Inspired by [womanonrails](https://womanonrails.com/logitech-g915-tkl).
 
 ## Ideas
-- This could be optimized for a lot more devices, but I just wanted a quick solution while setting up Mint.
+This app can be extended for other devices but was created as a quick solution for the G915 keyboard.
 
-## Screenshot
-
-![Image](2024-06-12_00-25.png)
+## Image
+![Image](2025-03-25-1742921990.png)

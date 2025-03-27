@@ -237,12 +237,10 @@ class G915ColorChanger:
         self.save_config()  # This can be removed if you want to avoid saving
 
         try:
-            # Get the active profile
-            result = subprocess.run(["ratbagctl", device, "profile", "active", "get"], check=True,
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            active_profile = result.stdout.strip()  # Get the active profile number
+            # Set the profile to 0 directly
+            active_profile = "0"
 
-            # Apply the color to the active profile
+            # Apply the color to profile 0
             command = f'ratbagctl "{device}" profile {active_profile} led {led} set color {color}'
             subprocess.run(command, shell=True, check=True)
             self.status_label.config(text=f"Color changed successfully to #{color} on profile {active_profile}")

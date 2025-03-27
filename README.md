@@ -31,4 +31,4 @@ This Color Selector **WILL OVERWRITE** the default `profile 0`, which is active 
 This app can be extended for other devices but was created as a quick solution for the G915 keyboard. Maybe I will update it to work with other Logitech devices.
 
 ## Image
-![Image](2025-03-25-1742921990.png)
+![Image](2025-03-27-1743090732.png)

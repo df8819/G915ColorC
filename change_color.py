@@ -1,9 +1,8 @@
 # G915ColorChanger.py - Cross-distribution compatible version
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, colorchooser
 import subprocess
 import os
-import shutil
 import json
 import sys
 
@@ -25,13 +24,8 @@ class G915ColorChanger:
         self.main_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.main_tab, text="Color Changer")
 
-        # Settings tab
-        self.settings_tab = ttk.Frame(self.notebook)
-        self.notebook.add(self.settings_tab, text="Settings")
-
         # Setup the UI
         self.setup_main_tab()
-        self.setup_settings_tab()
 
         # Check dependencies on startup
         if not self.config.get("skip_dependency_check", False):
@@ -39,11 +33,6 @@ class G915ColorChanger:
 
     def load_config(self):
         default_config = {
-            "package_manager": self.detect_package_manager(),
-            "install_command": self.get_default_install_command(),
-            "package_name": self.get_default_package_name(),
-            "has_systemd": self.has_systemd(),
-            "skip_dependency_check": False,
             "last_device": "",
             "last_led": "0",
             "last_color": ""
@@ -62,58 +51,8 @@ class G915ColorChanger:
         return default_config
 
     def save_config(self):
-        try:
-            with open(self.config_file, 'w') as f:
-                json.dump(self.config, f)
-        except Exception as e:
-            messagebox.showwarning("Config Warning", f"Could not save config: {e}")
-
-    def detect_package_manager(self):
-        if shutil.which("apt"):
-            return "apt"
-        elif shutil.which("pacman"):
-            return "pacman"
-        elif shutil.which("dnf"):
-            return "dnf"
-        elif shutil.which("zypper"):
-            return "zypper"
-        elif shutil.which("flatpak"):
-            return "flatpak"
-        else:
-            return "unknown"
-
-    def get_default_install_command(self):
-        pm = self.detect_package_manager()
-        if pm == "apt":
-            return "sudo apt install -y"
-        elif pm == "pacman":
-            return "sudo pacman -S --noconfirm"
-        elif pm == "dnf":
-            return "sudo dnf install -y"
-        elif pm == "zypper":
-            return "sudo zypper install -y"
-        elif pm == "flatpak":
-            return "flatpak install -y"
-        else:
-            return "echo 'Package manager not detected. Please install manually:'"
-
-    def get_default_package_name(self):
-        pm = self.detect_package_manager()
-        if pm == "apt":
-            return "ratbagd"
-        elif pm == "pacman":
-            return "ratbagd"
-        elif pm == "dnf":
-            return "libratbag"
-        elif pm == "zypper":
-            return "libratbag"
-        elif pm == "flatpak":
-            return "org.libratbag.ratbagd"
-        else:
-            return "ratbagd"
-
-    def has_systemd(self):
-        return shutil.which("systemctl") is not None
+        # Removed save_config functionality as per request
+        pass
 
     def setup_main_tab(self):
         frame = self.main_tab
@@ -134,57 +73,12 @@ class G915ColorChanger:
 
         # Color selection
         ttk.Label(frame, text="Color:").grid(row=2, column=0, sticky="w", padx=5, pady=5)
-        color_frame = ttk.Frame(frame)
-        color_frame.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
-
-        self.color_entry = ttk.Entry(color_frame, width=10)
-        self.color_entry.pack(side=tk.LEFT, fill="x", expand=True)
+        self.color_entry = ttk.Entry(frame, width=10)
+        self.color_entry.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
         self.color_entry.insert(0, self.config.get("last_color", ""))
 
-        # Predefined colors
-        self.colors = {
-            "White": "F0F0F0",
-            "Black (OFF)": "000000",
-            "Grey": "808080",
-            "Red": "FF0000",
-            "Green": "00FF00",
-            "Blue": "0000FF",
-            "Yellow": "FFFF00",
-            "Cyan": "00FFFF",
-            "Magenta": "FF00FF",
-            "Orange": "FFA500",
-            "Purple": "800080",
-            "Dark Red": "8B0000",
-            "Dark Green": "006400",
-            "Dark Blue": "00008B",
-            "Dark Yellow": "9B870C",
-            "Dark Cyan": "008B8B",
-            "Dark Magenta": "8B008B",
-            "Dark Orange": "FF8C00",
-            "Dark Purple": "4B0082",
-            "Dark Slate Grey": "2F4F4F",
-            "Olive": "808000",
-            "Light Red": "FF6961",
-            "Light Green": "77DD77",
-            "Light Blue": "AEC6CF",
-            "Light Yellow": "FDFD96",
-            "Light Cyan": "A0E7E5",
-            "Light Magenta": "FFB7C5",
-            "Light Orange": "FFB347",
-            "Light Purple": "CBAACB",
-            "Light Pink": "FFD1DC",
-            "Light Peach": "FFDAB9"
-        }
-
-        self.color_var = tk.StringVar(value="Select Color")
-        color_dropdown = ttk.OptionMenu(
-            color_frame,
-            self.color_var,
-            "Select Color",
-            *self.colors.keys(),
-            command=self.select_predefined_color
-        )
-        color_dropdown.pack(side=tk.RIGHT, padx=5)
+        # Color picker button
+        ttk.Button(frame, text="Select Color", command=self.choose_color).grid(row=2, column=2, padx=5, pady=5)
 
         # Apply button
         ttk.Button(frame, text="Apply Color", command=self.apply_color).grid(row=3, column=1, pady=10)
@@ -196,54 +90,11 @@ class G915ColorChanger:
         # Refresh devices on startup
         self.root.after(500, self.refresh_devices)
 
-    def setup_settings_tab(self):
-        frame = self.settings_tab
-
-        # Package manager settings
-        ttk.Label(frame, text="Package Manager:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
-        self.pm_var = tk.StringVar(value=self.config.get("package_manager", "unknown"))
-        pm_combo = ttk.Combobox(frame, textvariable=self.pm_var, values=["apt", "pacman", "dnf", "zypper", "flatpak", "unknown"])
-        pm_combo.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
-
-        # Install command
-        ttk.Label(frame, text="Install Command:").grid(row=1, column=0, sticky="w", padx=5, pady=5)
-        self.install_cmd_var = tk.StringVar(value=self.config.get("install_command", ""))
-        ttk.Entry(frame, textvariable=self.install_cmd_var, width=30).grid(row=1, column=1, sticky="ew", padx=5, pady=5)
-
-        # Package name
-        ttk.Label(frame, text="Package Name:").grid(row=2, column=0, sticky="w", padx=5, pady=5)
-        self.package_name_var = tk.StringVar(value=self.config.get("package_name", ""))
-        ttk.Entry(frame, textvariable=self.package_name_var, width=30).grid(row=2, column=1, sticky="ew", padx=5, pady=5)
-
-        # Systemd checkbox
-        self.systemd_var = tk.BooleanVar(value=self.config.get("has_systemd", False))
-        ttk.Checkbutton(frame, text="System uses systemd", variable=self.systemd_var).grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=5)
-
-        # Skip dependency check
-        self.skip_check_var = tk.BooleanVar(value=self.config.get("skip_dependency_check", False))
-        ttk.Checkbutton(frame, text="Skip dependency check on startup", variable=self.skip_check_var).grid(row=4, column=0, columnspan=2, sticky="w", padx=5, pady=5)
-
-        # Save button
-        ttk.Button(frame, text="Save Settings", command=self.save_settings).grid(row=5, column=0, columnspan=2, pady=10)
-
-        # Reset button
-        ttk.Button(frame, text="Reset to Defaults", command=self.reset_settings).grid(row=6, column=0, columnspan=2, pady=5)
-
-    def save_settings(self):
-        self.config["package_manager"] = self.pm_var.get()
-        self.config["install_command"] = self.install_cmd_var.get()
-        self.config["package_name"] = self.package_name_var.get()
-        self.config["has_systemd"] = self.systemd_var.get()
-        self.config["skip_dependency_check"] = self.skip_check_var.get()
-        self.save_config()
-        messagebox.showinfo("Settings", "Settings saved successfully!")
-
-    def reset_settings(self):
-        self.pm_var.set(self.detect_package_manager())
-        self.install_cmd_var.set(self.get_default_install_command())
-        self.package_name_var.set(self.get_default_package_name())
-        self.systemd_var.set(self.has_systemd())
-        self.skip_check_var.set(False)
+    def choose_color(self):
+        color_code = colorchooser.askcolor(title="Choose a color")
+        if color_code[1]:
+            self.color_entry.delete(0, tk.END)
+            self.color_entry.insert(0, color_code[1][1:])
 
     def check_dependencies(self):
         try:
@@ -255,7 +106,21 @@ class G915ColorChanger:
                                           "ratbagctl is not installed. Would you like to install it?")
             if install:
                 try:
-                    cmd = f"{self.config['install_command']} {self.config['package_name']}"
+                    pm = self.detect_package_manager()
+                    if pm == "apt":
+                        cmd = "sudo apt install -y ratbagd"
+                    elif pm == "pacman":
+                        cmd = "sudo pacman -S --noconfirm ratbagd"
+                    elif pm == "dnf":
+                        cmd = "sudo dnf install -y libratbag"
+                    elif pm == "zypper":
+                        cmd = "sudo zypper install -y libratbag"
+                    elif pm == "flatpak":
+                        cmd = "flatpak install -y org.libratbag.ratbagd"
+                    else:
+                        messagebox.showerror("Error", "Unsupported package manager. Please install ratbagd manually.")
+                        return False
+
                     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     stdout, stderr = process.communicate()
 
@@ -263,17 +128,11 @@ class G915ColorChanger:
                         messagebox.showerror("Error", f"Failed to install dependencies: {stderr.decode()}")
                         return False
 
-                    if self.config.get("has_systemd", False):
-                        subprocess.run(["sudo", "systemctl", "start", "ratbagd"], check=True)
-                        subprocess.run(["sudo", "systemctl", "enable", "ratbagd"], check=True)
-
                     messagebox.showinfo("Success", "Dependencies installed successfully.")
                     return True
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to install dependencies: {e}")
                     return False
-            else:
-                return False
         except Exception as e:
             messagebox.showerror("Error", f"Error checking dependencies: {e}")
             return False
@@ -375,12 +234,18 @@ class G915ColorChanger:
         self.config["last_device"] = device
         self.config["last_led"] = led
         self.config["last_color"] = color
-        self.save_config()
+        self.save_config()  # This can be removed if you want to avoid saving
 
         try:
-            command = f'ratbagctl "{device}" led {led} set color {color}'
+            # Get the active profile
+            result = subprocess.run(["ratbagctl", device, "profile", "active", "get"], check=True,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            active_profile = result.stdout.strip()  # Get the active profile number
+
+            # Apply the color to the active profile
+            command = f'ratbagctl "{device}" profile {active_profile} led {led} set color {color}'
             subprocess.run(command, shell=True, check=True)
-            self.status_label.config(text=f"Color changed successfully to #{color}")
+            self.status_label.config(text=f"Color changed successfully to #{color} on profile {active_profile}")
         except Exception as e:
             self.status_label.config(text=f"Error changing color: {e}")
 

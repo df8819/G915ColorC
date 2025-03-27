@@ -3,13 +3,11 @@ from tkinter import messagebox, ttk, colorchooser
 import subprocess
 import sys
 
-
-# noinspection PyAttributeOutsideInit,GrazieInspection
 class G915ColorChanger:
     def __init__(self, root):
         self.root = root
         self.root.title("G915 LED Color Changer")
-        self.root.geometry("850x420")
+        self.root.geometry("860x360")
 
         # Create notebook for tabs
         self.notebook = ttk.Notebook(root)
@@ -68,45 +66,60 @@ class G915ColorChanger:
             self.color_entry.insert(0, color_code[1][1:])
 
     def check_dependencies(self):
+        # Check for ratbagctl
         try:
             subprocess.run(["ratbagctl", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.status_label.config(text="Dependencies are installed.")
-            return True
         except FileNotFoundError:
-            install = messagebox.askyesno("Install Dependencies",
-                                          "ratbagctl is not installed. Would you like to install it?")
+            install = messagebox.askyesno("Install ratbagctl",
+                                            "ratbagctl is not installed. Would you like to install it?")
             if install:
-                try:
-                    pm = self.detect_package_manager()
-                    if pm == "apt":
-                        cmd = "sudo apt install -y ratbagd"
-                    elif pm == "pacman":
-                        cmd = "sudo pacman -S --noconfirm ratbagd"
-                    elif pm == "dnf":
-                        cmd = "sudo dnf install -y libratbag"
-                    elif pm == "zypper":
-                        cmd = "sudo zypper install -y libratbag"
-                    elif pm == "flatpak":
-                        cmd = "flatpak install -y org.libratbag.ratbagd"
-                    else:
-                        messagebox.showerror("Error", "Unsupported package manager. Please install ratbagd manually.")
-                        return False
+                self.install_ratbagctl()
 
-                    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    stdout, stderr = process.communicate()
+        # Check for Tkinter
+        try:
+            import tkinter
+        except ImportError:
+            install_prompt = messagebox.askyesno("Install Tkinter", "Would you like to install Tkinter now?")
+            if install_prompt:
+                self.install_tkinter()
 
-                    if process.returncode != 0:
-                        messagebox.showerror("Error", f"Failed to install dependencies: {stderr.decode()}")
-                        return False
+    def install_ratbagctl(self):
+        pm = self.detect_package_manager()
+        if pm == "apt":
+            cmd = "sudo apt install -y ratbagd"
+        elif pm == "pacman":
+            cmd = "sudo pacman -S --noconfirm ratbagd"
+        elif pm == "dnf":
+            cmd = "sudo dnf install -y libratbag"
+        elif pm == "zypper":
+            cmd = "sudo zypper install -y libratbag"
+        elif pm == "flatpak":
+            cmd = "flatpak install -y org.libratbag.ratbagd"
+        else:
+            messagebox.showerror("Error", "Unsupported package manager. Please install ratbagctl manually.")
+            return
 
-                    messagebox.showinfo("Success", "Dependencies installed successfully.")
-                    return True
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to install dependencies: {e}")
-                    return False
-        except Exception as e:
-            messagebox.showerror("Error", f"Error checking dependencies: {e}")
-            return False
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+
+        if process.returncode != 0:
+            messagebox.showerror("Error", f"Failed to install ratbagctl: {stderr.decode()}")
+        else:
+            messagebox.showinfo("Success", "ratbagctl installed successfully.")
+
+    def install_tkinter(self):
+        pm = self.detect_package_manager()
+        if pm == "apt":
+            subprocess.run(["sudo", "apt", "install", "-y", "python3-tk"])
+        elif pm == "pacman":
+            subprocess.run(["sudo", "pacman", "-S", "tk"])
+        elif pm == "dnf":
+            subprocess.run(["sudo", "dnf", "install", "-y", "python3-tkinter"])
+        elif pm == "zypper":
+            subprocess.run(["sudo", "zypper", "install", "-y", "python3-tk"])
+        else:
+            messagebox.showerror("Error", "Unsupported package manager. Please install Tkinter manually.")
 
     def refresh_devices(self):
         try:

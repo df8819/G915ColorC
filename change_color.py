@@ -1,20 +1,13 @@
-# G915ColorChanger.py - Cross-distribution compatible version
 import tkinter as tk
 from tkinter import messagebox, ttk, colorchooser
 import subprocess
-import os
-import json
 import sys
 
 class G915ColorChanger:
     def __init__(self, root):
         self.root = root
         self.root.title("G915 LED Color Changer")
-        self.root.geometry("750x420")
-
-        # Configuration
-        self.config_file = os.path.expanduser("~/.g915colorchanger.json")
-        self.config = self.load_config()
+        self.root.geometry("850x420")
 
         # Create notebook for tabs
         self.notebook = ttk.Notebook(root)
@@ -28,54 +21,30 @@ class G915ColorChanger:
         self.setup_main_tab()
 
         # Check dependencies on startup
-        if not self.config.get("skip_dependency_check", False):
-            self.root.after(100, self.check_dependencies)
-
-    def load_config(self):
-        default_config = {
-            "last_device": "",
-            "last_led": "0",
-            "last_color": ""
-        }
-
-        try:
-            if os.path.exists(self.config_file):
-                with open(self.config_file, 'r') as f:
-                    saved_config = json.load(f)
-                    # Update default with saved, but keep default values for any missing keys
-                    for key, value in saved_config.items():
-                        default_config[key] = value
-        except Exception as e:
-            messagebox.showwarning("Config Warning", f"Could not load config: {e}")
-
-        return default_config
-
-    def save_config(self):
-        # Removed save_config functionality as per request
-        pass
+        self.root.after(100, self.check_dependencies)
 
     def setup_main_tab(self):
         frame = self.main_tab
 
         # Device selection
         ttk.Label(frame, text="Device:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
-        self.device_var = tk.StringVar(value=self.config.get("last_device", ""))
-        self.device_combo = ttk.Combobox(frame, textvariable=self.device_var, width=30)
+        self.device_var = tk.StringVar(value="")  # Default value
+        self.device_combo = ttk.Combobox(frame, textvariable=self.device_var, width=40)
         self.device_combo.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
         ttk.Button(frame, text="Refresh", command=self.refresh_devices).grid(row=0, column=2, padx=5, pady=5)
 
         # LED selection
         ttk.Label(frame, text="LED:").grid(row=1, column=0, sticky="w", padx=5, pady=5)
-        self.led_var = tk.StringVar(value=self.config.get("last_led", "0"))
-        self.led_combo = ttk.Combobox(frame, textvariable=self.led_var, width=30)
+        self.led_var = tk.StringVar(value="0")  # Default value
+        self.led_combo = ttk.Combobox(frame, textvariable=self.led_var, width=40)
         self.led_combo.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
         ttk.Button(frame, text="Refresh", command=self.refresh_leds).grid(row=1, column=2, padx=5, pady=5)
 
         # Color selection
-        ttk.Label(frame, text="Color:").grid(row=2, column=0, sticky="w", padx=5, pady=5)
-        self.color_entry = ttk.Entry(frame, width=10)
+        ttk.Label(frame, text="Color (hex format '000000'):").grid(row=2, column=0, sticky="w", padx=5, pady=5)
+        self.color_entry = ttk.Entry(frame, width=20)
         self.color_entry.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
-        self.color_entry.insert(0, self.config.get("last_color", ""))
+        self.color_entry.insert(0, "")  # Default value
 
         # Color picker button
         ttk.Button(frame, text="Select Color", command=self.choose_color).grid(row=2, column=2, padx=5, pady=5)
@@ -84,7 +53,7 @@ class G915ColorChanger:
         ttk.Button(frame, text="Apply Color", command=self.apply_color).grid(row=3, column=1, pady=10)
 
         # Status label
-        self.status_label = ttk.Label(frame, text="")
+        self.status_label = ttk.Label(frame, text="", wraplength=700)
         self.status_label.grid(row=4, column=0, columnspan=3, pady=5)
 
         # Refresh devices on startup
@@ -154,20 +123,9 @@ class G915ColorChanger:
 
             self.device_combo['values'] = devices
 
-            # Select the last used device or the first G915 if found
-            last_device = self.config.get("last_device", "")
-            if last_device and last_device in devices:
-                self.device_combo.set(last_device)
-            else:
-                # Try to find a G915
-                for device in devices:
-                    if "G915" in device:
-                        self.device_combo.set(device)
-                        break
-                else:
-                    # Otherwise select the first device
-                    if devices:
-                        self.device_combo.set(devices[0])
+            # Select the first device
+            if devices:
+                self.device_combo.set(devices[0])
 
             # Refresh LEDs for the selected device
             self.refresh_leds()
@@ -197,21 +155,14 @@ class G915ColorChanger:
 
             self.led_combo['values'] = leds
 
-            # Select the last used LED or the first one
-            last_led = self.config.get("last_led", "")
-            if last_led and last_led in leds:
-                self.led_combo.set(last_led)
-            else:
+            # Select the first LED
+            if leds:
                 self.led_combo.set(leds[0])
 
             self.status_label.config(text=f"Found {len(leds)} LEDs on {device}")
 
         except Exception as e:
             self.status_label.config(text=f"Error: {e}")
-
-    def select_predefined_color(self, choice):
-        self.color_entry.delete(0, tk.END)
-        self.color_entry.insert(0, self.colors[choice])
 
     def apply_color(self):
         device = self.device_var.get()
@@ -229,12 +180,6 @@ class G915ColorChanger:
         if not color:
             self.status_label.config(text="Error: No color specified")
             return
-
-        # Save the current selections to config
-        self.config["last_device"] = device
-        self.config["last_led"] = led
-        self.config["last_color"] = color
-        self.save_config()  # This can be removed if you want to avoid saving
 
         try:
             # Set the profile to 0 directly
